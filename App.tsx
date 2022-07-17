@@ -1,52 +1,49 @@
-/**
- * Sample React Native App
- * https://github.com/facebook/react-native
- *
- * Generated with the TypeScript template
- * https://github.com/react-native-community/react-native-template-typescript
- *
- * @format
- */
-
 import {
-  Colors,
-  DebugInstructions,
-  Header,
-  LearnMoreLinks,
-  ReloadInstructions,
-} from 'react-native/Libraries/NewAppScreen';
-import React, {PropsWithChildren} from 'react';
-import {
+  Animated,
+  Dimensions,
   SafeAreaView,
-  ScrollView,
-  StatusBar,
   StyleSheet,
   Text,
   View,
-  useColorScheme,
 } from 'react-native';
+
+import CircularProgress from './src/CircularProgress';
+import React from 'react';
 
 const App = () => {
   return (
     <>
       <SafeAreaView style={styles.background} />
       <View style={styles.topbar}>
-        <Text style={styles.titleText}>Hello</Text>
+        <Text style={styles.titleText}>Coupon Cooking</Text>
+        <Animated.View style={{justifyContent: 'center', flex: 1}}>
+          <CircularProgress savingsString={'$41.95'} />
+        </Animated.View>
       </View>
+      <View
+        style={{
+          backgroundColor: '#FFFFFF',
+          height: Dimensions.get('window').height,
+        }}
+      />
     </>
   );
 };
 
 const styles = StyleSheet.create({
   titleText: {
-    color: '#000000',
+    color: '#FFFFFF',
+    fontSize: 30,
+    fontWeight: 'bold',
+    paddingTop: 30,
   },
   background: {
-    backgroundColor: '#000000',
+    backgroundColor: '#5DB075',
   },
   topbar: {
-    backgroundColor: '#FFFFFF',
-    flex: 1,
+    backgroundColor: '#5DB075',
+    height: Dimensions.get('window').height / 2.5,
+    alignItems: 'center',
   },
   sectionContainer: {
     marginTop: 32,
