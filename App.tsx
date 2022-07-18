@@ -1,16 +1,47 @@
+import * as Location from 'expo-location';
+
 import {
   Animated,
+  Button,
   Dimensions,
   SafeAreaView,
   StyleSheet,
   Text,
+  TextInput,
   View,
 } from 'react-native';
+import {PERMISSIONS, check, request} from 'react-native-permissions';
+import React, {useEffect, useState} from 'react';
 
 import CircularProgress from './src/CircularProgress';
-import React from 'react';
+import {WebView} from 'react-native-webview';
+
+const getLocation = async () => {
+  const permissionStatus = await check(PERMISSIONS.IOS.LOCATION_WHEN_IN_USE);
+  let requestStatus = '';
+  if (permissionStatus !== 'granted') {
+    requestStatus = await request(PERMISSIONS.IOS.LOCATION_WHEN_IN_USE);
+  }
+
+  const last = await Location.getLastKnownPositionAsync();
+  console.log('here');
+  console.log(JSON.stringify(last));
+};
 
 const App = () => {
+  const [text, onChangeText] = useState('');
+  // useEffect(() => {
+  //   (async () => {
+  //     let {status} = await Location.requestForegroundPermissionsAsync();
+  //     if (status !== 'granted') {
+  //       console.log('bad');
+  //       return;
+  //     }
+
+  //     let location = await Location.getCurrentPositionAsync({});
+  //     console.log(location);
+  //   })();
+  // }, []);
   return (
     <>
       <SafeAreaView style={styles.background} />
@@ -19,13 +50,28 @@ const App = () => {
         <Animated.View style={{justifyContent: 'center', flex: 1}}>
           <CircularProgress savingsString={'$41.95'} />
         </Animated.View>
+        <TextInput
+          onChangeText={onChangeText}
+          value={text}
+          placeholder="Postal Code"
+          maxLength={6}
+          onSubmitEditing={() => console.log(text)}
+        />
+        {/* <Button title="click me" onPress={async () => getLocation()} /> */}
       </View>
       <View
         style={{
           backgroundColor: '#FFFFFF',
           height: Dimensions.get('window').height,
-        }}
-      />
+        }}>
+        <WebView
+          source={{
+            uri:
+              'https://flipp.com/en-ca/ottawa-on/flyer/5016862-food-basics-flyer?postal_code=' +
+              text,
+          }}
+        />
+      </View>
     </>
   );
 };
