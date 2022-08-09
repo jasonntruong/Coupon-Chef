@@ -7,6 +7,9 @@ backend/ingredients.txt
 backend/ingredientsbackup.txt
 backend/rawingredients.txt
 backend/tempCodeRunnerFile.py
+backend/apikeys.txt
+backend/instructions.txt
+backend/recipes.json
 
 # OSX
 #

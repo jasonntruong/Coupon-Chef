@@ -2,6 +2,7 @@ from flask import *
 
 import time
 import json
+import requests
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
 from webdriver_manager.chrome import ChromeDriverManager
@@ -11,25 +12,29 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.common.action_chains import ActionChains
 from selenium.webdriver.common.keys import Keys
 
-# app = Flask(__name__)
-
-# @app.route('/', methods=['GET'])
-# def home_page():
-#     data_set = {'Page': 'Home',
-#                 'Message': 'Succesfully loaded the homepage', 'Timestamp': time.time()}
-#     json_dump = json.dumps(data_set)
-
-#     return json_dump
+app = Flask(__name__)
 
 
-# @app.route('/request/', methods=['GET'])
-# def request_page():
-#     user_query = str(request.args.get('user'))  # /request/?user=USERNAME
-#     data_set = {'Page': 'Home',
-#                 'Message': f'Succesfully got the request for {user_query}', 'Timestamp': time.time()}
-#     json_dump = json.dumps(data_set)
+@app.route('/', methods=['GET'])
+def home_page():
+    data_set = {'Page': 'Home',
+                'Message': 'Succesfully loaded the homepage', 'Timestamp': time.time()}
+    json_dump = json.dumps(data_set)
 
-#     return json_dump
+    return json_dump
+
+
+@app.route('/recipes/', methods=['GET'])
+def request_page():
+    apiKey = str(request.args.get('apiKey'))
+    if (apiKey != api_key):
+        data_set = {'Message': f'Incorrect API key', 'Timestamp': time.time()}
+        json_dump = json.dumps(data_set)
+    else:
+        json_dump = json.dumps(recipes)
+
+    return json_dump
+
 
 def getIngredients():
     ingredients = set()
@@ -59,6 +64,7 @@ def findSaleSavings(saleStory):
 
 
 def getFlyers():
+    driver = webdriver.Chrome(ChromeDriverManager().install())
     flyersToGet = ['Real Canadian Superstore', 'M&amp;M Food Market', 'Whole Foods', 'Metro',
                    'Loblaws', 'Walmart', 'Farm Boy', 'Sobeys', 'FreshCo', 'Food Basics', 'Fortino\'s']
     driver.get(urlWithPostal)
@@ -91,8 +97,11 @@ def getFlyers():
     with open('backend/flyers.json', 'w') as out:
         json.dump(flyers, out)
 
+    driver.quit()
+
 
 def getSales():
+    driver = webdriver.Chrome(ChromeDriverManager().install())
     with open('backend/flyers.json') as json_in:
         flyers = json.load(json_in)
     with open('backend/savings.json', 'w') as out:
@@ -167,18 +176,44 @@ def getSales():
     with open('backend/savings.json', 'a') as out:
         json.dump(sales, out)
 
+    driver.quit()
+
+
+def getRecipes():
+    with open('backend/savings.json', 'r') as json_in:
+        savings = json.load(json_in)
+
+    savingLink = ""
+    for saving in savings:
+        if (saving != ''):
+            savingLink += saving + ",+"
+
+    savingLink = savingLink[:-2]
+
+    r = requests.get('https://api.spoonacular.com/recipes/findByIngredients?apiKey=' + api_key + '&ingredients=' +
+                     savingLink + '&number=100')
+
+    recipes_json = r.json()
+
+    with open('backend/recipes.json', 'w') as json_out:
+        json.dump(recipes_json, json_out)
+
 
 if (__name__ == '__main__'):
-    # app.run(port=2323)
+    with open('backend/apikeys.txt', 'r') as api_in:
+        api_key = api_in.read()
+    with open('backend/recipes.json', 'r') as recipes_in:
+        recipes = json.load(recipes_in)
+    app.run(port=2323)
     POSTALCODE = ""
     url = "https://flipp.com"
     urlWithPostal = "https://flipp.com/en-ca/en-ca/flyers/groceries?postal_code=" + POSTALCODE
     options = Options()
     options.headless = True
-    driver = webdriver.Chrome(ChromeDriverManager().install())
+
     ingredients = getIngredients()
     # print(ingredients)
 
-    getFlyers()
-    getSales()
-    driver.quit()
+    # getFlyers()
+    # getSales()
+    # getRecipes()
