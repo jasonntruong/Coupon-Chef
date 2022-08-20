@@ -23,17 +23,16 @@ def home_page():
 
     return json_dump
 
+# @app.route('/recipes/', methods=['GET'])
+# def request_page():
+#     apiKey = str(request.args.get('apiKey'))
+#     if (apiKey != api_key):
+#         data_set = {'Message': f'Incorrect API key', 'Timestamp': time.time()}
+#         json_dump = json.dumps(data_set)
+#     else:
+#         json_dump = json.dumps(recipes)
 
-@app.route('/recipes/', methods=['GET'])
-def request_page():
-    apiKey = str(request.args.get('apiKey'))
-    if (apiKey != api_key):
-        data_set = {'Message': f'Incorrect API key', 'Timestamp': time.time()}
-        json_dump = json.dumps(data_set)
-    else:
-        json_dump = json.dumps(recipes)
-
-    return json_dump
+#     return json_dump
 
 
 def getIngredients():
@@ -179,6 +178,24 @@ def getSales():
     driver.quit()
 
 
+def processMissingOrUsedIngredient(ingredients):
+    ingredient_json = []
+    for ingredient in ingredients:
+        ingredient_json.append({"amount": ingredient["amount"], "unit": ingredient["unitShort"],
+                                "name": ingredient["originalName"], "image": ingredient["image"]})
+    return ingredient_json
+
+
+def processRecipes(recipes):
+    new_recipes = []
+    for recipe in recipes:
+        new_recipes.append({
+            "title": recipe["title"], "image": recipe["image"], "missedIngredients": processMissingOrUsedIngredient(recipe["missedIngredients"]), "usedIngredients": processMissingOrUsedIngredient(recipe["usedIngredients"])})
+
+    with open('backend/recipes.json', 'w') as recipes_json:
+        json.dump(new_recipes, recipes_json)
+
+
 def getRecipes():
     with open('backend/savings.json', 'r') as json_in:
         savings = json.load(json_in)
@@ -195,16 +212,18 @@ def getRecipes():
 
     recipes_json = r.json()
 
-    with open('backend/recipes.json', 'w') as json_out:
-        json.dump(recipes_json, json_out)
+    processRecipes(recipes_json)
 
 
 if (__name__ == '__main__'):
+    start_route = False
     with open('backend/apikeys.txt', 'r') as api_in:
         api_key = api_in.read()
-    with open('backend/recipes.json', 'r') as recipes_in:
-        recipes = json.load(recipes_in)
-    app.run(port=2323)
+    # with open('backend/recipes.json', 'r') as recipes_in:
+    #     recipes = json.load(recipes_in)
+    if (start_route):
+        app.run(port=2323)
+
     POSTALCODE = ""
     url = "https://flipp.com"
     urlWithPostal = "https://flipp.com/en-ca/en-ca/flyers/groceries?postal_code=" + POSTALCODE
@@ -216,4 +235,4 @@ if (__name__ == '__main__'):
 
     # getFlyers()
     # getSales()
-    # getRecipes()
+    getRecipes()
