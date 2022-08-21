@@ -23,6 +23,7 @@ function App() {
       }
       let response = await fetch(apiURL);
       let json = await response.json();
+
       console.log(json);
       setRecipes(json);
     };
@@ -40,14 +41,13 @@ function App() {
         }
       })
       .then(contents => {
-        console.log(contents);
         return contents;
       })
       .catch(err => {
         console.log(err.message, err.code);
       });
   }
-  if (Object.keys(recipes).length === 0) {
+  if (!recipes) {
     return null;
   }
   return (

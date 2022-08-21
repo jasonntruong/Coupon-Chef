@@ -1,4 +1,4 @@
-package com.grocerysaver.newarchitecture.components;
+package com.couponchef.newarchitecture.components;
 
 import com.facebook.jni.HybridData;
 import com.facebook.proguard.annotations.DoNotStrip;

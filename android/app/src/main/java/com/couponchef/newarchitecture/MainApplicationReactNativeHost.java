@@ -1,4 +1,4 @@
-package com.grocerysaver.newarchitecture;
+package com.couponchef.newarchitecture;
 
 import android.app.Application;
 import androidx.annotation.NonNull;
@@ -19,9 +19,9 @@ import com.facebook.react.fabric.CoreComponentsRegistry;
 import com.facebook.react.fabric.FabricJSIModuleProvider;
 import com.facebook.react.fabric.ReactNativeConfig;
 import com.facebook.react.uimanager.ViewManagerRegistry;
-import com.grocerysaver.BuildConfig;
-import com.grocerysaver.newarchitecture.components.MainComponentsRegistry;
-import com.grocerysaver.newarchitecture.modules.MainApplicationTurboModuleManagerDelegate;
+import com.couponchef.BuildConfig;
+import com.couponchef.newarchitecture.components.MainComponentsRegistry;
+import com.couponchef.newarchitecture.modules.MainApplicationTurboModuleManagerDelegate;
 import java.util.ArrayList;
 import java.util.List;
 
