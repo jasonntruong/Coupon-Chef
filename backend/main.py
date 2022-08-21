@@ -23,16 +23,17 @@ def home_page():
 
     return json_dump
 
-# @app.route('/recipes/', methods=['GET'])
-# def request_page():
-#     apiKey = str(request.args.get('apiKey'))
-#     if (apiKey != api_key):
-#         data_set = {'Message': f'Incorrect API key', 'Timestamp': time.time()}
-#         json_dump = json.dumps(data_set)
-#     else:
-#         json_dump = json.dumps(recipes)
 
-#     return json_dump
+@app.route('/recipes/', methods=['GET'])
+def request_page():
+    apiKey = str(request.args.get('apiKey'))
+    if (apiKey != api_key):
+        data_set = {'Message': f'Incorrect API key', 'Timestamp': time.time()}
+        json_dump = json.dumps(data_set)
+    else:
+        json_dump = json.dumps(recipes)
+
+    return json_dump
 
 
 def getIngredients():
@@ -216,11 +217,13 @@ def getRecipes():
 
 
 if (__name__ == '__main__'):
-    start_route = False
+    start_route = True
     with open('backend/apikeys.txt', 'r') as api_in:
         api_key = api_in.read()
-    # with open('backend/recipes.json', 'r') as recipes_in:
-    #     recipes = json.load(recipes_in)
+
+    with open('backend/recipes.json', 'r') as recipes_in:
+        recipes = json.load(recipes_in)
+
     if (start_route):
         app.run(port=2323)
 
@@ -235,4 +238,4 @@ if (__name__ == '__main__'):
 
     # getFlyers()
     # getSales()
-    getRecipes()
+    # getRecipes()

@@ -1,0 +1,13 @@
+{
+  "migIndex": 1,
+  "data": [
+    {
+      "path": "src/CircularProgress.tsx",
+      "sha1": "8f54deda4b107d88b023268fc3f8be18a47acd1e"
+    },
+    {
+      "path": "src/apikey.txt",
+      "sha1": "f76b4b8a34e50af24be57f2f592fabef817116cd"
+    }
+  ]
+}

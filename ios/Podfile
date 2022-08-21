@@ -13,6 +13,7 @@ target 'GrocerySaver' do
   permissions_path = '../node_modules/react-native-permissions/ios'
   pod 'Permission-LocationAccuracy', :path => "#{permissions_path}/LocationAccuracy"
   pod 'Permission-LocationWhenInUse', :path => "#{permissions_path}/LocationWhenInUse"
+  pod 'RNFS', :path => '../node_modules/react-native-fs'
   
   use_react_native!(
     :path => config[:reactNativePath],
