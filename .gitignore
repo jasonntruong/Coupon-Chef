@@ -11,6 +11,7 @@ backend/apikeys.txt
 backend/instructions.txt
 backend/recipes.json
 backend/recipesbackup.json
+src/apikey.txt
 
 # OSX
 #

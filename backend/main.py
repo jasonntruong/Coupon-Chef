@@ -23,6 +23,7 @@ def home_page():
 
     return json_dump
 
+
 @app.route('/recipes/', methods=['GET'])
 def request_page():
     apiKey = str(request.args.get('apiKey'))
@@ -219,6 +220,7 @@ if (__name__ == '__main__'):
     start_route = True
     with open('backend/apikeys.txt', 'r') as api_in:
         api_key = api_in.read()
+
     with open('backend/recipes.json', 'r') as recipes_in:
         recipes = json.load(recipes_in)
     if (start_route):
@@ -235,4 +237,4 @@ if (__name__ == '__main__'):
 
     # getFlyers()
     # getSales()
-    #getRecipes()
+    # getRecipe

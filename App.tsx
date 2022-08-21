@@ -1,5 +1,3 @@
-import * as Location from 'expo-location';
-
 import {
   Animated,
   Button,
@@ -7,74 +5,69 @@ import {
   SafeAreaView,
   StyleSheet,
   Text,
-  TextInput,
   View,
 } from 'react-native';
-import {PERMISSIONS, check, request} from 'react-native-permissions';
 import React, {useEffect, useState} from 'react';
 
 import CircularProgress from './src/CircularProgress';
-import {WebView} from 'react-native-webview';
+import {NavigationContainer} from '@react-navigation/native';
+import RNFS from 'react-native-fs';
 
-const getLocation = async () => {
-  const permissionStatus = await check(PERMISSIONS.IOS.LOCATION_WHEN_IN_USE);
-  let requestStatus = '';
-  if (permissionStatus !== 'granted') {
-    requestStatus = await request(PERMISSIONS.IOS.LOCATION_WHEN_IN_USE);
+function App() {
+  const [recipes, setRecipes] = useState({});
+  useEffect(() => {
+    const fetchRecipes = async () => {
+      const apiURL = await getRecipesAPI();
+      if (apiURL === undefined) {
+        return;
+      }
+      let response = await fetch(apiURL);
+      let json = await response.json();
+      console.log(json);
+      setRecipes(json);
+    };
+
+    fetchRecipes();
+  }, []);
+
+  async function getRecipesAPI() {
+    return RNFS.readDir(RNFS.MainBundlePath)
+      .then(result => {
+        for (var i in result) {
+          if (result[i].isFile() && result[i].name === 'apikey.txt') {
+            return RNFS.readFile(result[i].path, 'utf8');
+          }
+        }
+      })
+      .then(contents => {
+        console.log(contents);
+        return contents;
+      })
+      .catch(err => {
+        console.log(err.message, err.code);
+      });
   }
-
-  const last = await Location.getLastKnownPositionAsync();
-  console.log('here');
-  console.log(JSON.stringify(last));
-};
-
-const App = () => {
-  const [text, onChangeText] = useState('');
-  // useEffect(() => {
-  //   (async () => {
-  //     let {status} = await Location.requestForegroundPermissionsAsync();
-  //     if (status !== 'granted') {
-  //       console.log('bad');
-  //       return;
-  //     }
-
-  //     let location = await Location.getCurrentPositionAsync({});
-  //     console.log(location);
-  //   })();
-  // }, []);
+  if (Object.keys(recipes).length === 0) {
+    return null;
+  }
   return (
-    <>
+    <NavigationContainer>
       <SafeAreaView style={styles.background} />
       <View style={styles.topbar}>
         <Text style={styles.titleText}>Coupon Cooking</Text>
         <Animated.View style={{justifyContent: 'center', flex: 1}}>
           <CircularProgress savingsString={'$41.95'} />
         </Animated.View>
-        <TextInput
-          onChangeText={onChangeText}
-          value={text}
+        {/* <TextInput
           placeholder="Postal Code"
           maxLength={6}
-          onSubmitEditing={() => console.log(text)}
-        />
-        {/* <Button title="click me" onPress={async () => getLocation()} /> */}
+          onSubmitEditing={fetchRecipes}
+        /> */}
       </View>
-      <View
-        style={{
-          backgroundColor: '#FFFFFF',
-          height: Dimensions.get('window').height,
-        }}>
-        <WebView
-          source={{
-            uri:
-              'https://flipp.com/en-ca/ottawa-on/flyer/5016862-food-basics-flyer?postal_code=' +
-              text,
-          }}
-        />
-      </View>
-    </>
+      <View></View>
+    </NavigationContainer>
   );
-};
+}
 
 const styles = StyleSheet.create({
   titleText: {
