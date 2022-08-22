@@ -24,14 +24,18 @@ def home_page():
     return json_dump
 
 
-@app.route('/recipes/', methods=['GET'])
+@app.route('/request/', methods=['GET'])
 def request_page():
+    req = str(request.args.get('request'))
     apiKey = str(request.args.get('apiKey'))
     if (apiKey != api_key):
         data_set = {'Message': f'Incorrect API key', 'Timestamp': time.time()}
         json_dump = json.dumps(data_set)
     else:
-        json_dump = json.dumps(recipes)
+        if req == "recipes":
+            json_dump = json.dumps(recipes)
+        elif req == "sales":
+            json_dump = json.dumps(sales)
 
     return json_dump
 
@@ -44,6 +48,20 @@ def getIngredients():
             ingredients.add(ingredient[:-1])
 
     return ingredients
+
+
+def findOriginalName(name):
+    with open('backend/sales.json', 'r') as f:
+        sales = json.load(f)
+    print(sales["CUMIN"])
+    name = name.upper()
+    allWords = name.split(' ') + name.split(',')
+    nonPlurals = removePlural(allWords)
+    foundWords = []
+    for word in nonPlurals:
+        if (word in sales and word not in foundWords):
+            foundWords.append(word)
+    return foundWords
 
 
 def findSaleSavings(saleStory):
@@ -65,8 +83,8 @@ def findSaleSavings(saleStory):
 
 def getFlyers():
     driver = webdriver.Chrome(ChromeDriverManager().install())
-    flyersToGet = ['Real Canadian Superstore', 'M&amp;M Food Market', 'Whole Foods', 'Metro',
-                   'Loblaws', 'Walmart', 'Farm Boy', 'Sobeys', 'FreshCo', 'Food Basics', 'Fortino\'s']
+    flyersToGet = ['Metro', 'Loblaws', 'Walmart', 'Farm Boy',
+                   'Sobeys', 'FreshCo', 'Food Basics', 'Fortino\'s']
     driver.get(urlWithPostal)
 
     WebDriverWait(driver, 20).until(
@@ -100,11 +118,28 @@ def getFlyers():
     driver.quit()
 
 
+def removePlural(words):
+    nonPlurals = []
+    for word in words:
+        if word in ingredients:
+            nonPlurals.append(word)
+        elif word[:-1] in ingredients:
+            nonPlurals.append(word[:-1])
+        elif word + 'S' in ingredients:
+            nonPlurals.append(word)
+        elif word[:-2] in ingredients:
+            nonPlurals.append(word[:-2])
+        elif word + 'ES' in ingredients:
+            nonPlurals.append(word)
+
+    return nonPlurals
+
+
 def getSales():
     driver = webdriver.Chrome(ChromeDriverManager().install())
     with open('backend/flyers.json') as json_in:
         flyers = json.load(json_in)
-    with open('backend/savings.json', 'w') as out:
+    with open('backend/sales.json', 'w') as out:
         out.write('')
     sales = {}
     # sales: {
@@ -131,13 +166,7 @@ def getSales():
 
                 saleWords = saleName.split(' ')
 
-                for word in saleWords:
-                    if word in ingredients:
-                        foundIngredients.append(word)
-                    elif word[-1] == 'S' and word[:-1] in ingredients:
-                        foundIngredients.append(word[:-1])
-                    elif word + 'S' in ingredients:
-                        foundIngredients.append(word + 'S')
+                foundIngredients = removePlural(saleWords)
 
                 if (len(foundIngredients) > 0):
                     driver.execute_script(
@@ -165,15 +194,14 @@ def getSales():
                             else:
                                 sales[i] = [{
                                     "store": flyerName, "item": saleName, "price": findSaleSavings(salePrice), "savings": findSaleSavings(saleSavings), "url": saleURL}]
-                        time.sleep(0.3)
-                        print(sales)
+                        time.sleep(0.2)
                     except:
                         print('Bad link')
                     driver.close()
                     driver.switch_to.window(driver.window_handles[0])
                 # input()
 
-    with open('backend/savings.json', 'a') as out:
+    with open('backend/sales.json', 'a') as out:
         json.dump(sales, out)
 
     driver.quit()
@@ -183,7 +211,7 @@ def processMissingOrUsedIngredient(ingredients):
     ingredient_json = []
     for ingredient in ingredients:
         ingredient_json.append({"amount": ingredient["amount"], "unit": ingredient["unitShort"],
-                                "name": ingredient["originalName"], "image": ingredient["image"]})
+                                "name": ingredient["name"], "original": findOriginalName(ingredient["name"]), "image": ingredient["image"]})
     return ingredient_json
 
 
@@ -198,7 +226,7 @@ def processRecipes(recipes):
 
 
 def getRecipes():
-    with open('backend/savings.json', 'r') as json_in:
+    with open('backend/sales.json', 'r') as json_in:
         savings = json.load(json_in)
 
     savingLink = ""
@@ -224,6 +252,9 @@ if (__name__ == '__main__'):
     with open('backend/recipes.json', 'r') as recipes_in:
         recipes = json.load(recipes_in)
 
+    with open('backend/sales.json', 'r') as sales_in:
+        sales = json.load(sales_in)
+
     if (start_route):
         app.run(port=2323)
 
@@ -234,7 +265,6 @@ if (__name__ == '__main__'):
     options.headless = True
 
     ingredients = getIngredients()
-    # print(ingredients)
 
     # getFlyers()
     # getSales()

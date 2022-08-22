@@ -3,6 +3,7 @@ import {
   Button,
   Dimensions,
   SafeAreaView,
+  ScrollView,
   StyleSheet,
   Text,
   View,
@@ -12,19 +13,25 @@ import React, {useEffect, useState} from 'react';
 import CircularProgress from './src/CircularProgress';
 import {NavigationContainer} from '@react-navigation/native';
 import RNFS from 'react-native-fs';
+import RecipeItem from './src/RecipeItem';
 
 function App() {
   const [recipes, setRecipes] = useState({});
+  const [sales, setSales] = useState({});
+
   useEffect(() => {
     const fetchRecipes = async () => {
       const apiURL = await getRecipesAPI();
       if (apiURL === undefined) {
         return;
       }
-      let response = await fetch(apiURL);
-      let json = await response.json();
-      console.log(json);
-      setRecipes(json);
+      let recipeResponse = await fetch(apiURL + 'recipes');
+      let recipeJson = await recipeResponse.json();
+      let saleResponse = await fetch(apiURL + 'sales');
+      let saleJson = await saleResponse.json();
+
+      setRecipes(recipeJson);
+      setSales(saleJson);
     };
 
     fetchRecipes();
@@ -40,44 +47,72 @@ function App() {
         }
       })
       .then(contents => {
-        console.log(contents);
         return contents;
       })
       .catch(err => {
         console.log(err.message, err.code);
       });
   }
-  if (Object.keys(recipes).length === 0) {
+  if (Object.keys(recipes).length === 0 || Object.keys(sales).length === 0) {
     return null;
   }
+  const recipeItems = recipes.map(recipe => {
+    return <RecipeItem recipes={recipe} sales={sales}></RecipeItem>;
+  });
   return (
     <NavigationContainer>
-      <SafeAreaView style={styles.background} />
+      <SafeAreaView style={styles.topBackground} />
       <View style={styles.topbar}>
-        <Text style={styles.titleText}>Coupon Cooking</Text>
+        <Text style={styles.titleText}>Coupon Chef</Text>
         <Animated.View style={{justifyContent: 'center', flex: 1}}>
           <CircularProgress savingsString={'$41.95'} />
         </Animated.View>
-        {/* <TextInput
-          placeholder="Postal Code"
-          maxLength={6}
-          onSubmitEditing={fetchRecipes}
-        /> */}
       </View>
-      <View></View>
+      <View style={styles.header} />
+      <ScrollView style={styles.bottomBackground}>
+        <Text style={styles.subtitleText}>Explore</Text>
+        <ScrollView horizontal={true} showsHorizontalScrollIndicator={false}>
+          {recipeItems}
+        </ScrollView>
+        <Text style={styles.subtitleText}>Saved</Text>
+        <Text style={styles.subtitleText}>History</Text>
+      </ScrollView>
+      <View style={styles.footer} />
     </NavigationContainer>
   );
 }
 
 const styles = StyleSheet.create({
+  header: {
+    height: 10,
+    backgroundColor: 'white',
+  },
+
+  footer: {
+    height: 40,
+    backgroundColor: 'white',
+  },
+  row: {
+    flexDirection: 'row',
+  },
+  subtitleText: {
+    fontSize: 24,
+    paddingTop: 30,
+    paddingBottom: 8,
+  },
   titleText: {
     color: '#FFFFFF',
     fontSize: 30,
     fontWeight: 'bold',
     paddingTop: 30,
   },
-  background: {
+  topBackground: {
     backgroundColor: '#5DB075',
+  },
+  bottomBackground: {
+    backgroundColor: '#FFFFFF',
+    paddingTop: 0,
+    padding: 15,
   },
   topbar: {
     backgroundColor: '#5DB075',
