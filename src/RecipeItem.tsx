@@ -1,7 +1,11 @@
-import {Image, Text, Touchable, TouchableOpacity, View} from 'react-native';
-import React, {useEffect, useState} from 'react';
+import {Image, Text, TouchableOpacity, View} from 'react-native';
+import React, {useState} from 'react';
+
+import RecipeDetails from './RecipeDetails';
 
 function RecipeItem(props) {
+  const [showDetails, setShowDetails] = useState(false);
+
   function isValidValue(price, type) {
     const numberPrice = Number(price);
     if (
@@ -57,15 +61,20 @@ function RecipeItem(props) {
   const price = calculateValue('price');
   const title = formatTitle();
   return (
-    <TouchableOpacity style={styles.box}>
+    <TouchableOpacity style={styles.box} onPress={() => setShowDetails(true)}>
       <View style={styles.border}>
         <Image style={styles.image} source={{uri: props.recipes.image}} />
       </View>
       <Text style={styles.title}>{title}</Text>
       <View style={styles.row}>
         <Text style={styles.savings}>{'$' + savings}</Text>
-        <Text style={styles.price}>{'$' + price}</Text>
+        {/* <Text style={styles.price}>{'$' + price}</Text> */}
       </View>
+      <RecipeDetails
+        showDetails={showDetails}
+        onRequestClose={() => setShowDetails(false)}
+        recipes={props.recipes}
+        sales={props.sales}></RecipeDetails>
     </TouchableOpacity>
   );
 }

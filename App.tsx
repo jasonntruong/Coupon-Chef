@@ -2,6 +2,7 @@ import {
   Animated,
   Button,
   Dimensions,
+  LogBox,
   SafeAreaView,
   ScrollView,
   StyleSheet,
@@ -14,6 +15,8 @@ import CircularProgress from './src/CircularProgress';
 import {NavigationContainer} from '@react-navigation/native';
 import RNFS from 'react-native-fs';
 import RecipeItem from './src/RecipeItem';
+
+LogBox.ignoreAllLogs();
 
 function App() {
   const [recipes, setRecipes] = useState({});
