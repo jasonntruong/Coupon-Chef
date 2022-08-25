@@ -1,4 +1,5 @@
 import {
+  Alert,
   Button,
   Dimensions,
   Image,
@@ -18,7 +19,77 @@ import Dropdown from './Dropdown';
 
 function RecipeDetails(props) {
   const [saved, setSaved] = useState(props.saved);
-
+  function isDecimal(number) {
+    if (!number) {
+      return null;
+    }
+    return (
+      number.indexOf('.') === -1 ||
+      number.indexOf('.') === number.lastIndexOf('.')
+    );
+  }
+  function addStrings(num1, num2) {
+    if (isDecimal(num1) && isDecimal(num2)) {
+      return parseInt((parseFloat(num1) + parseFloat(num2)) * 100) / 100;
+    }
+    return null;
+  }
+  function gotReward(num) {
+    const milestoneDifference =
+      parseInt(num / 100) - parseInt(props.moneySaved / 100);
+    if (milestoneDifference > 0) {
+      Alert.alert(
+        'Congratulations!',
+        "You've passed the $100 savings milestone. Treat yourself to " +
+          milestoneDifference +
+          ' takeout meal(s)',
+      );
+    }
+  }
+  async function addToHistory() {
+    const historyItems = await AsyncStorage.getItem('historyItems');
+    if (!historyItems || historyItems === '') {
+      await AsyncStorage.setItem(
+        'historyItems',
+        JSON.stringify([props.recipes]),
+      );
+    } else {
+      const toHistory = [props.recipes];
+      const parsedItems = JSON.parse(historyItems);
+      for (var item of parsedItems) {
+        toHistory.push(item);
+      }
+      console.log(toHistory);
+      await AsyncStorage.setItem('historyItems', JSON.stringify(toHistory));
+    }
+  }
+  async function purchased() {
+    Alert.prompt(
+      'Make purchase',
+      'How much did you save?',
+      [
+        {text: 'Cancel'},
+        {
+          text: 'Purchase',
+          onPress: async text => {
+            const sum = addStrings(props.moneySaved, text);
+            if (sum) {
+              await addToHistory();
+              await AsyncStorage.setItem('money', sum.toString());
+              await gotReward(sum);
+              console.log('added to history');
+            } else {
+              console.log('bad');
+            }
+            await props.onRequestClose();
+          },
+        },
+      ],
+      'plain-text',
+      '',
+      'decimal-pad',
+    );
+  }
   async function saveItem() {
     const savedItems = await AsyncStorage.getItem('savedItems');
     if (!savedItems || savedItems === '') {
@@ -71,9 +142,7 @@ function RecipeDetails(props) {
                 source={require('../img/back.png')}
               />
             </TouchableOpacity>
-            <TouchableOpacity
-              style={styles.touchable}
-              onPress={props.onRequestClose}>
+            <TouchableOpacity style={styles.touchable} onPress={purchased}>
               <Image
                 style={{width: 30, height: 30, margin: 10}}
                 source={require('../img/cart.png')}

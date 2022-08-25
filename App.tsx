@@ -24,8 +24,8 @@ function App() {
   const [recipes, setRecipes] = useState({});
   const [sales, setSales] = useState({});
   const [saved, setSaved] = useState([]);
-  console.log(test);
-
+  const [history, setHistory] = useState([]);
+  const [moneySaved, setMoneySaved] = useState('0');
   useEffect(() => {
     const fetchRecipes = async () => {
       const apiURL = await getRecipesAPI();
@@ -45,29 +45,58 @@ function App() {
   }, []);
   useEffect(() => {
     const f = async () => {
+      const money = await AsyncStorage.getItem('money');
       const savedItems = await AsyncStorage.getItem('savedItems');
-      console.log(savedItems);
-      let parsedItems = [];
+      const historyItems = await AsyncStorage.getItem('historyItems');
+
+      let parsedSaved = [];
+      let parsedHistory = [];
       if (savedItems && savedItems !== '') {
-        parsedItems = JSON.parse(savedItems);
+        parsedSaved = JSON.parse(savedItems);
+      }
+      if (historyItems && historyItems !== '') {
+        parsedHistory = JSON.parse(historyItems);
       }
 
       if (Object.keys(sales).length === 0) {
         setTest(!test);
-      } else if (parsedItems.length === 0) {
-        setSaved([]);
-      } else if (parsedItems) {
-        const save = parsedItems.map(recipe => {
-          console.log('RECIPE', recipe);
-          return (
-            <RecipeItem
-              recipes={recipe}
-              sales={sales}
-              backPressed={() => setTest(!test)}
-              saved={true}></RecipeItem>
-          );
-        });
-        setSaved(save);
+      } else {
+        if (money) {
+          setMoneySaved(money);
+        }
+
+        if (parsedHistory.length === 0) {
+          setHistory([]);
+        } else if (parsedHistory) {
+          const historyRecipes = parsedHistory.map(recipe => {
+            return (
+              <RecipeItem
+                recipes={recipe}
+                sales={sales}
+                backPressed={() => setTest(!test)}
+                saved={false}
+                moneySaved={money}></RecipeItem>
+            );
+          });
+          setHistory(historyRecipes);
+        }
+        if (parsedSaved.length === 0) {
+          setSaved([]);
+        } else if (parsedSaved) {
+          const save = parsedSaved.map(recipe => {
+            return (
+              <RecipeItem
+                recipes={recipe}
+                sales={sales}
+                backPressed={() => setTest(!test)}
+                saved={true}
+                moneySaved={money}></RecipeItem>
+            );
+          });
+          if (save) {
+            setSaved(save);
+          }
+        }
       }
     };
     f();
@@ -111,7 +140,8 @@ function App() {
         sales={sales}
         backPressed={() => setTest(!test)}
         saved={false}
-        savedItems={saved}></RecipeItem>
+        savedItems={saved}
+        moneySaved={moneySaved}></RecipeItem>
     );
   });
   // const savedItems = () => {
@@ -128,7 +158,7 @@ function App() {
       <View style={styles.topbar}>
         <Text style={styles.titleText}>Coupon Chef</Text>
         <Animated.View style={{justifyContent: 'center', flex: 1}}>
-          <CircularProgress savingsString={'$41.95'} />
+          <CircularProgress savingsString={'$' + moneySaved} />
         </Animated.View>
       </View>
       <View style={styles.header} />
@@ -142,7 +172,20 @@ function App() {
           {saved}
         </ScrollView>
         <Text style={styles.subtitleText}>History</Text>
+        <ScrollView horizontal={true} showsHorizontalScrollIndicator={false}>
+          {history}
+        </ScrollView>
+        <Button
+          title={'dev force reset'}
+          onPress={() => {
+            AsyncStorage.setItem('money', '0');
+            AsyncStorage.setItem('savedItems', '');
+            AsyncStorage.setItem('historyItems', '');
+            setTest(!test);
+          }}
+        />
       </ScrollView>
+
       <View style={styles.footer} />
     </NavigationContainer>
   );

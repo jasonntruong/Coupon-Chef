@@ -77,7 +77,8 @@ function RecipeItem(props) {
         }}
         recipes={props.recipes}
         sales={props.sales}
-        saved={props.saved}></RecipeDetails>
+        saved={props.saved}
+        moneySaved={props.moneySaved}></RecipeDetails>
     </TouchableOpacity>
   );
 }
