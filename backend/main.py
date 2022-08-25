@@ -53,7 +53,6 @@ def getIngredients():
 def findOriginalName(name):
     with open('backend/sales.json', 'r') as f:
         sales = json.load(f)
-    print(sales["CUMIN"])
     name = name.upper()
     allWords = name.split(' ') + name.split(',')
     nonPlurals = removePlural(allWords)
@@ -215,11 +214,15 @@ def processMissingOrUsedIngredient(ingredients):
     return ingredient_json
 
 
+def getRecipeLink(recipeName, recipeID):
+    return (recipeName.replace(' ', '-') + '-' + str(recipeID))
+
+
 def processRecipes(recipes):
     new_recipes = []
     for recipe in recipes:
         new_recipes.append({
-            "title": recipe["title"], "image": recipe["image"], "missedIngredients": processMissingOrUsedIngredient(recipe["missedIngredients"]), "usedIngredients": processMissingOrUsedIngredient(recipe["usedIngredients"])})
+            "title": recipe["title"], "link": getRecipeLink(recipe["title"], recipe["id"]), "image": recipe["image"], "missedIngredients": processMissingOrUsedIngredient(recipe["missedIngredients"]), "usedIngredients": processMissingOrUsedIngredient(recipe["usedIngredients"])})
 
     with open('backend/recipes.json', 'w') as recipes_json:
         json.dump(new_recipes, recipes_json)
@@ -240,7 +243,6 @@ def getRecipes():
                      savingLink + '&number=100')
 
     recipes_json = r.json()
-
     processRecipes(recipes_json)
 
 

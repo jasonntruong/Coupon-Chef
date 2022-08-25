@@ -1,1 +1,1 @@
-https://642d-2607-fea8-c39f-e7a0-519b-15e7-9f82-b6b3.ngrok.io/recipes/?apiKey=22425c3f0efd46f5adaeaecf601880e6
+https://jason-truong-woo.loca.lt/request/?apiKey=22425c3f0efd46f5adaeaecf601880e6&request=

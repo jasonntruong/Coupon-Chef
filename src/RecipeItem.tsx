@@ -5,7 +5,6 @@ import RecipeDetails from './RecipeDetails';
 
 function RecipeItem(props) {
   const [showDetails, setShowDetails] = useState(false);
-
   function isValidValue(price, type) {
     const numberPrice = Number(price);
     if (
@@ -72,9 +71,13 @@ function RecipeItem(props) {
       </View>
       <RecipeDetails
         showDetails={showDetails}
-        onRequestClose={() => setShowDetails(false)}
+        onRequestClose={() => {
+          setShowDetails(false);
+          props.backPressed();
+        }}
         recipes={props.recipes}
-        sales={props.sales}></RecipeDetails>
+        sales={props.sales}
+        saved={props.saved}></RecipeDetails>
     </TouchableOpacity>
   );
 }
@@ -121,10 +124,6 @@ const styles = {
     borderRadius: 8,
     justifyContent: 'center',
     alignItems: 'center',
-    // shadowColor: '#000000',
-    // shadowOffset: {width: 0, height: 1},
-    // shadowOpacity: 0.15,
-    // shadowRadius: 1,
   },
 };
 

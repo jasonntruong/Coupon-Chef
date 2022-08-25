@@ -11,6 +11,7 @@ import {
 } from 'react-native';
 import React, {useEffect, useState} from 'react';
 
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import CircularProgress from './src/CircularProgress';
 import {NavigationContainer} from '@react-navigation/native';
 import RNFS from 'react-native-fs';
@@ -19,8 +20,11 @@ import RecipeItem from './src/RecipeItem';
 LogBox.ignoreAllLogs();
 
 function App() {
+  const [test, setTest] = useState(false);
   const [recipes, setRecipes] = useState({});
   const [sales, setSales] = useState({});
+  const [saved, setSaved] = useState([]);
+  console.log(test);
 
   useEffect(() => {
     const fetchRecipes = async () => {
@@ -39,6 +43,47 @@ function App() {
 
     fetchRecipes();
   }, []);
+  useEffect(() => {
+    const f = async () => {
+      const savedItems = await AsyncStorage.getItem('savedItems');
+      console.log(savedItems);
+      let parsedItems = [];
+      if (savedItems && savedItems !== '') {
+        parsedItems = JSON.parse(savedItems);
+      }
+
+      if (Object.keys(sales).length === 0) {
+        setTest(!test);
+      } else if (parsedItems.length === 0) {
+        setSaved([]);
+      } else if (parsedItems) {
+        const save = parsedItems.map(recipe => {
+          console.log('RECIPE', recipe);
+          return (
+            <RecipeItem
+              recipes={recipe}
+              sales={sales}
+              backPressed={() => setTest(!test)}
+              saved={true}></RecipeItem>
+          );
+        });
+        setSaved(save);
+      }
+    };
+    f();
+  }, [test]);
+  // const getSaved = AsyncStorage.getItem('savedItems').then(a => {
+  //   var allItems = [];
+  //   JSON.parse(a).map(recipe => {
+  //     allItems.push(recipe);
+  //   });
+  //   return allItems.map(recipe => {
+  //     return <RecipeItem recipes={recipe} sales={sales}></RecipeItem>;
+  //   });
+  // });
+  // const sa = getSaved.then(a => {
+  //   return a;
+  // });
 
   async function getRecipesAPI() {
     return RNFS.readDir(RNFS.MainBundlePath)
@@ -60,8 +105,23 @@ function App() {
     return null;
   }
   const recipeItems = recipes.map(recipe => {
-    return <RecipeItem recipes={recipe} sales={sales}></RecipeItem>;
+    return (
+      <RecipeItem
+        recipes={recipe}
+        sales={sales}
+        backPressed={() => setTest(!test)}
+        saved={false}
+        savedItems={saved}></RecipeItem>
+    );
   });
+  // const savedItems = () => {
+  //   const getSaved = AsyncStorage.getItem('savedItems')
+
+  //   for (var recipe of recipes) {
+  //     if (recipe.link in )
+  //   }
+  // };
+  // savedItems();
   return (
     <NavigationContainer>
       <SafeAreaView style={styles.topBackground} />
@@ -78,6 +138,9 @@ function App() {
           {recipeItems}
         </ScrollView>
         <Text style={styles.subtitleText}>Saved</Text>
+        <ScrollView horizontal={true} showsHorizontalScrollIndicator={false}>
+          {saved}
+        </ScrollView>
         <Text style={styles.subtitleText}>History</Text>
       </ScrollView>
       <View style={styles.footer} />

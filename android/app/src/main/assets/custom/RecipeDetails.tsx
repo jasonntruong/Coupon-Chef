@@ -11,75 +11,29 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import React, {useEffect, useState} from 'react';
-
 import AsyncStorage from '@react-native-async-storage/async-storage';
+
 import Dropdown from './Dropdown';
+import React from 'react';
 
 function RecipeDetails(props) {
-  const [saved, setSaved] = useState(props.saved);
-
-  async function saveItem() {
+  function saveItem() {
     const savedItems = await AsyncStorage.getItem('savedItems');
-    if (!savedItems || savedItems === '') {
-      await AsyncStorage.setItem('savedItems', JSON.stringify([props.recipes]));
-    } else {
-      const toBeSaved = [props.recipes];
-      const parsedItems = JSON.parse(savedItems);
-      for (var item of parsedItems) {
-        if (item.link === props.recipes.link) {
-          return;
-        }
-        toBeSaved.push(item);
-      }
-      console.log(toBeSaved);
-      setSaved(true);
-      await AsyncStorage.setItem('savedItems', JSON.stringify(toBeSaved));
-    }
-  }
-
-  async function removeItem() {
-    const toBeSaved = [];
-    const savedItems = await AsyncStorage.getItem('savedItems');
-    if (!savedItems || savedItems === '') {
-      return;
-    }
-    for (var item of JSON.parse(savedItems)) {
-      if (item.link !== props.recipes.link) {
-        toBeSaved.push(item);
-      }
-    }
-    console.log(toBeSaved);
-    setSaved(false);
-
-    await AsyncStorage.setItem(
-      'savedItems',
-      JSON.stringify(toBeSaved.length === 0 ? '' : toBeSaved),
-    );
+    await AsyncStorage.setItem();
   }
 
   return (
     <Modal animationType="slide" visible={props.showDetails}>
       <>
         <SafeAreaView>
-          <View style={styles.top}>
-            <TouchableOpacity
-              style={styles.touchable}
-              onPress={props.onRequestClose}>
-              <Image
-                style={{width: 30, height: 30, margin: 10}}
-                source={require('../img/back.png')}
-              />
-            </TouchableOpacity>
-            <TouchableOpacity
-              style={styles.touchable}
-              onPress={props.onRequestClose}>
-              <Image
-                style={{width: 30, height: 30, margin: 10}}
-                source={require('../img/cart.png')}
-              />
-            </TouchableOpacity>
-          </View>
+          <TouchableOpacity
+            style={styles.topBar}
+            onPress={props.onRequestClose}>
+            <Image
+              style={{width: 30, height: 30, margin: 10}}
+              source={require('../img/back.png')}
+            />
+          </TouchableOpacity>
           <ScrollView style={styles.container}>
             <Text style={styles.title}>{props.recipes.title}</Text>
             <View style={styles.border}>
@@ -105,11 +59,9 @@ function RecipeDetails(props) {
           <View style={styles.bottom}>
             <View style={styles.buttonSecondary}>
               <Button
-                title={saved ? 'Saved' : 'Save'}
+                title={'Save'}
                 color={'#5DB075'}
-                onPress={() => {
-                  saved ? removeItem() : saveItem();
-                }}
+                onPress={props.onRequestClose}
               />
             </View>
             <View style={styles.buttonPrimary}>
@@ -130,13 +82,7 @@ function RecipeDetails(props) {
   );
 }
 const styles = StyleSheet.create({
-  top: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    paddingHorizontal: 15,
-  },
-  touchable: {
+  topBar: {
     shadowColor: '#000000',
     shadowOffset: {width: 0, height: 1},
     shadowOpacity: 0.15,
