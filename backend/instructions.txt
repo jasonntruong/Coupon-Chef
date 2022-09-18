@@ -1,0 +1,5 @@
+cd C:
+cd C:\ngrok-v3-stable-windows-amd64
+./ngrok http 2323
+
+run python file in another terminal

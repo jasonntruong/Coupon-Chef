@@ -1,14 +1,13 @@
 backend/chromedriver.exe
 backend/flyers.json
-backend/savings.json
-backend/savingsbackup.json
+backend/sales.json
+backend/salesbackup.json
 backend/cleaner.py
 backend/ingredients.txt
 backend/ingredientsbackup.txt
 backend/rawingredients.txt
 backend/tempCodeRunnerFile.py
 backend/apikeys.txt
-backend/instructions.txt
 backend/recipes.json
 backend/recipesbackup.json
 src/apikey.txt

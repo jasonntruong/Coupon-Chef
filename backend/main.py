@@ -1,5 +1,3 @@
-from flask import *
-
 import time
 import json
 import requests
@@ -10,42 +8,45 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.action_chains import ActionChains
-from selenium.webdriver.common.keys import Keys
 
-app = Flask(__name__)
-
-
-@app.route('/', methods=['GET'])
-def home_page():
-    data_set = {'Page': 'Home',
-                'Message': 'Succesfully loaded the homepage', 'Timestamp': time.time()}
-    json_dump = json.dumps(data_set)
-
-    return json_dump
+# SALES BACKEND
 
 
-@app.route('/recipes/', methods=['GET'])
-def request_page():
-    apiKey = str(request.args.get('apiKey'))
-    if (apiKey != api_key):
-        data_set = {'Message': f'Incorrect API key', 'Timestamp': time.time()}
-        json_dump = json.dumps(data_set)
-    else:
-        json_dump = json.dumps(recipes)
+# given a word, find it's non plural version that's in the ingredients set
+def removePlural(words):
+    nonPlurals = []
+    for word in words:
+        if word in ingredients:
+            nonPlurals.append(word)
+        elif word[:-1] in ingredients:
+            nonPlurals.append(word[:-1])
+        elif word + 'S' in ingredients:
+            nonPlurals.append(word)
+        elif word[:-2] in ingredients:
+            nonPlurals.append(word[:-2])
+        elif word + 'ES' in ingredients:
+            nonPlurals.append(word)
 
-    return json_dump
-
-
-def getIngredients():
-    ingredients = set()
-    with open('backend/ingredients.txt', 'r') as f:
-        allIngredients = f.readlines()
-        for ingredient in allIngredients:
-            ingredients.add(ingredient[:-1])
-
-    return ingredients
+    return nonPlurals
 
 
+# given an ingredient, find the ingredient keys in the sales json
+def findOriginalName(name):
+    # ex: tomatoes soup ==> TOMATO and SOUP in sales json
+    with open('backend/sales.json', 'r') as f:
+        sales = json.load(f)
+    name = name.upper()
+    allWords = name.split(' ') + name.split(',')
+    nonPlurals = removePlural(allWords)
+    foundWords = []
+    for word in nonPlurals:
+        if (word in sales and word not in foundWords):
+            foundWords.append(word)
+    return foundWords
+
+
+# given a saleStory (a string of the sale item), extract the sale savings price
+# only works for items that show the actual savings (some items just drop in price without displaying the discount)
 def findSaleSavings(saleStory):
     allowed = ".0123456789"
     savingStr = ""
@@ -63,10 +64,20 @@ def findSaleSavings(saleStory):
     return savingStr
 
 
-def getFlyers():
+def getIngredients():  # create an ingredients set from ingredients.txt which is a list of all ingredients
+    ingredients = set()
+    with open('backend/ingredients.txt', 'r') as f:
+        allIngredients = f.readlines()
+        for ingredient in allIngredients:
+            ingredients.add(ingredient[:-1])
+
+    return ingredients
+
+
+def getFlyers():  # find links to flyers from local grocery stores via selenium and flipp.com. dump the flyer links to flyers.json
     driver = webdriver.Chrome(ChromeDriverManager().install())
-    flyersToGet = ['Real Canadian Superstore', 'M&amp;M Food Market', 'Whole Foods', 'Metro',
-                   'Loblaws', 'Walmart', 'Farm Boy', 'Sobeys', 'FreshCo', 'Food Basics', 'Fortino\'s']
+    flyersToGet = ['Metro', 'Loblaws', 'Walmart', 'Farm Boy',
+                   'Sobeys', 'FreshCo', 'Food Basics', 'Fortino\'s']
     driver.get(urlWithPostal)
 
     WebDriverWait(driver, 20).until(
@@ -100,22 +111,14 @@ def getFlyers():
     driver.quit()
 
 
-def getSales():
+def getSales():  # find all the valid ingredient sales in the flyers from flyers.json and dump them in sales.json
     driver = webdriver.Chrome(ChromeDriverManager().install())
     with open('backend/flyers.json') as json_in:
         flyers = json.load(json_in)
-    with open('backend/savings.json', 'w') as out:
+    with open('backend/sales.json', 'w') as out:
         out.write('')
     sales = {}
-    # sales: {
-    #   itemName : {
-    #     store: string,
-    #     item: string,
-    #     price: string,
-    #     savings: string,
-    #     url: string
-    #   }
-    # }
+
     for flyerName in flyers:
         driver.get(url + flyers[flyerName])
         WebDriverWait(driver, 20).until(
@@ -131,21 +134,37 @@ def getSales():
 
                 saleWords = saleName.split(' ')
 
-                for word in saleWords:
-                    if word in ingredients:
-                        foundIngredients.append(word)
-                    elif word[-1] == 'S' and word[:-1] in ingredients:
-                        foundIngredients.append(word[:-1])
-                    elif word + 'S' in ingredients:
-                        foundIngredients.append(word + 'S')
+                foundIngredients = removePlural(saleWords)
 
+                # if there are words in this on sale item that are in the ingredient.json
                 if (len(foundIngredients) > 0):
+                    # open the sale in another tab (flipp doesn't allow me to extract the sale details unless the sale has been clicked on)
                     driver.execute_script(
                         "window.open('" + url + saleURL + "')")
                     WebDriverWait(driver, 10).until(
                         EC.number_of_windows_to_be(2))
 
+                    # switch to that tab
                     driver.switch_to.window(driver.window_handles[1])
+
+                    # extract the store name, item name, price, savings, and url
+                    # Example:
+                    # "CEREAL": [
+                    # {
+                    #     "store": "Metro",
+                    #     "item": "GERBER CEREAL",
+                    #     "price": "9.0",
+                    #     "savings": "1.99",
+                    #     "url": "exampleUrl"
+                    # },
+                    # {
+                    #     "store": "Walmart",
+                    #     "item": "KELLOGG'S FAMILY CEREAL",
+                    #     "price": "4.77",
+                    #     "savings": "1.99",
+                    #     "url": "exampleUrl"
+                    # },
+                    # ]
                     try:
                         WebDriverWait(driver, 10).until(
                             EC.visibility_of_element_located((By.TAG_NAME, "flipp-price")))
@@ -165,41 +184,27 @@ def getSales():
                             else:
                                 sales[i] = [{
                                     "store": flyerName, "item": saleName, "price": findSaleSavings(salePrice), "savings": findSaleSavings(saleSavings), "url": saleURL}]
-                        time.sleep(0.3)
-                        print(sales)
+                        time.sleep(0.2)  # give time in between each sale
                     except:
                         print('Bad link')
+
+                    # close tab and go back to orignal flyer tab
                     driver.close()
                     driver.switch_to.window(driver.window_handles[0])
-                # input()
 
-    with open('backend/savings.json', 'a') as out:
+    with open('backend/sales.json', 'a') as out:
         json.dump(sales, out)
 
     driver.quit()
 
 
-def processMissingOrUsedIngredient(ingredients):
-    ingredient_json = []
-    for ingredient in ingredients:
-        ingredient_json.append({"amount": ingredient["amount"], "unit": ingredient["unitShort"],
-                                "name": ingredient["originalName"], "image": ingredient["image"]})
-    return ingredient_json
+def getRecipes():  # gets recipes. takes sales from sales.json and makes an API call to spoonacular to get recipes
 
-
-def processRecipes(recipes):
-    new_recipes = []
-    for recipe in recipes:
-        new_recipes.append({
-            "title": recipe["title"], "image": recipe["image"], "missedIngredients": processMissingOrUsedIngredient(recipe["missedIngredients"]), "usedIngredients": processMissingOrUsedIngredient(recipe["usedIngredients"])})
-
-    with open('backend/recipes.json', 'w') as recipes_json:
-        json.dump(new_recipes, recipes_json)
-
-
-def getRecipes():
-    with open('backend/savings.json', 'r') as json_in:
+    with open('backend/sales.json', 'r') as json_in:
         savings = json.load(json_in)
+
+    with open('backend/apikeys.txt', 'r') as api_in:
+        api_key = api_in.read()
 
     savingLink = ""
     for saving in savings:
@@ -216,25 +221,34 @@ def getRecipes():
     processRecipes(recipes_json)
 
 
+# missing and used ingredients returned from spoonacular have a load of data that isn't needed. this function only returns relevant data
+def processMissingOrUsedIngredient(ingredients):
+    ingredient_json = []
+    for ingredient in ingredients:
+        ingredient_json.append({"amount": ingredient["amount"], "unit": ingredient["unitShort"],
+                                "name": ingredient["name"], "original": findOriginalName(ingredient["name"]), "image": ingredient["image"]})
+    return ingredient_json
+
+
+# process raw recipe data and dump all the recipes into recipes.json
+def processRecipes(recipes):
+    new_recipes = []
+    for recipe in recipes:
+        new_recipes.append({
+            "title": recipe["title"], "image": recipe["image"], "missedIngredients": processMissingOrUsedIngredient(recipe["missedIngredients"]), "usedIngredients": processMissingOrUsedIngredient(recipe["usedIngredients"])})
+
+    with open('backend/recipes.json', 'w') as recipes_json:
+        json.dump(new_recipes, recipes_json)
+
+
 if (__name__ == '__main__'):
-    start_route = True
-    with open('backend/apikeys.txt', 'r') as api_in:
-        api_key = api_in.read()
-
-    with open('backend/recipes.json', 'r') as recipes_in:
-        recipes = json.load(recipes_in)
-    if (start_route):
-        app.run(port=2323)
-
-    POSTALCODE = ""
     url = "https://flipp.com"
-    urlWithPostal = "https://flipp.com/en-ca/en-ca/flyers/groceries?postal_code=" + POSTALCODE
+    urlWithPostal = "https://flipp.com/en-ca/en-ca/flyers/groceries?postal_code="
     options = Options()
     options.headless = True
 
     ingredients = getIngredients()
-    # print(ingredients)
 
-    # getFlyers()
-    # getSales()
-    # getRecipe
+    getFlyers()
+    getSales()
+    getRecipes()

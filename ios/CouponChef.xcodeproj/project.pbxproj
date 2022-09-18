@@ -12,12 +12,14 @@
 		13B07FBC1A68108700A75B9A /* AppDelegate.mm in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB01A68108700A75B9A /* AppDelegate.mm */; };
 		13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB51A68108700A75B9A /* Images.xcassets */; };
 		13B07FC11A68108700A75B9A /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB71A68108700A75B9A /* main.m */; };
-		1FF0ADECB61347D2BF677004 /* apikey.txt in Resources */ = {isa = PBXBuildFile; fileRef = F393B0D811C641E7BA3036BE /* apikey.txt */; };
-		2C573A51D0FC4234AFCB5CE9 /* RecipeItem.tsx in Resources */ = {isa = PBXBuildFile; fileRef = F4E17D9D73F94428A20E3FB4 /* RecipeItem.tsx */; };
-		7334A5BC40554284AD43C7B5 /* App.tsx in Resources */ = {isa = PBXBuildFile; fileRef = AAAE8304D84840C0B6F40830 /* App.tsx */; };
+		38731DB8F5E749B9A6A7568B /* apikey.txt in Resources */ = {isa = PBXBuildFile; fileRef = FF0029F9600349CABBC5231B /* apikey.txt */; };
+		52414ED542684E4F9E0C9FFD /* App.tsx in Resources */ = {isa = PBXBuildFile; fileRef = 04B33A2CE4FE4279B8C24E68 /* App.tsx */; };
+		649565E0C65843DABDBD7DA0 /* RecipeItem.tsx in Resources */ = {isa = PBXBuildFile; fileRef = 57D12E9C38704151B178223D /* RecipeItem.tsx */; };
 		7699B88040F8A987B510C191 /* libPods-CouponChef-CouponChefTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 19F6CBCC0A4E27FBF8BF4A61 /* libPods-CouponChef-CouponChefTests.a */; };
 		81AB9BB82411601600AC10FF /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */; };
+		886E8F965CF943FCB62926A9 /* Dropdown.tsx in Resources */ = {isa = PBXBuildFile; fileRef = C457F979E6C342E296BA7233 /* Dropdown.tsx */; };
 		C885835AFE5B4003AC888DC0 /* CircularProgress.tsx in Resources */ = {isa = PBXBuildFile; fileRef = 3708563193B5455C821AD81D /* CircularProgress.tsx */; };
+		CFD901397D2940CDB80D6079 /* RecipeDetails.tsx in Resources */ = {isa = PBXBuildFile; fileRef = 20167D33B4214D468C5BDA86 /* RecipeDetails.tsx */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -34,6 +36,7 @@
 		00E356EE1AD99517003FC87E /* CouponChefTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = CouponChefTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		00E356F11AD99517003FC87E /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		00E356F21AD99517003FC87E /* CouponChefTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = CouponChefTests.m; sourceTree = "<group>"; };
+		04B33A2CE4FE4279B8C24E68 /* App.tsx */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = undefined; includeInIndex = 0; lastKnownFileType = unknown; name = App.tsx; path = ../App.tsx; sourceTree = "<group>"; };
 		13B07F961A680F5B00A75B9A /* CouponChef.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = CouponChef.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		13B07FAF1A68108700A75B9A /* AppDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AppDelegate.h; path = CouponChef/AppDelegate.h; sourceTree = "<group>"; };
 		13B07FB01A68108700A75B9A /* AppDelegate.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = AppDelegate.mm; path = CouponChef/AppDelegate.mm; sourceTree = "<group>"; };
@@ -41,17 +44,18 @@
 		13B07FB61A68108700A75B9A /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = Info.plist; path = CouponChef/Info.plist; sourceTree = "<group>"; };
 		13B07FB71A68108700A75B9A /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = main.m; path = CouponChef/main.m; sourceTree = "<group>"; };
 		19F6CBCC0A4E27FBF8BF4A61 /* libPods-CouponChef-CouponChefTests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-CouponChef-CouponChefTests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		20167D33B4214D468C5BDA86 /* RecipeDetails.tsx */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = undefined; includeInIndex = 0; lastKnownFileType = unknown; name = RecipeDetails.tsx; path = ../src/RecipeDetails.tsx; sourceTree = "<group>"; };
 		3708563193B5455C821AD81D /* CircularProgress.tsx */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = CircularProgress.tsx; path = ../src/CircularProgress.tsx; sourceTree = "<group>"; };
 		3B4392A12AC88292D35C810B /* Pods-CouponChef.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-CouponChef.debug.xcconfig"; path = "Target Support Files/Pods-CouponChef/Pods-CouponChef.debug.xcconfig"; sourceTree = "<group>"; };
 		5709B34CF0A7D63546082F79 /* Pods-CouponChef.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-CouponChef.release.xcconfig"; path = "Target Support Files/Pods-CouponChef/Pods-CouponChef.release.xcconfig"; sourceTree = "<group>"; };
+		57D12E9C38704151B178223D /* RecipeItem.tsx */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = undefined; includeInIndex = 0; lastKnownFileType = unknown; name = RecipeItem.tsx; path = ../src/RecipeItem.tsx; sourceTree = "<group>"; };
 		5B7EB9410499542E8C5724F5 /* Pods-CouponChef-CouponChefTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-CouponChef-CouponChefTests.debug.xcconfig"; path = "Target Support Files/Pods-CouponChef-CouponChefTests/Pods-CouponChef-CouponChefTests.debug.xcconfig"; sourceTree = "<group>"; };
 		5DCACB8F33CDC322A6C60F78 /* libPods-CouponChef.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-CouponChef.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; name = LaunchScreen.storyboard; path = CouponChef/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		89C6BE57DB24E9ADA2F236DE /* Pods-CouponChef-CouponChefTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-CouponChef-CouponChefTests.release.xcconfig"; path = "Target Support Files/Pods-CouponChef-CouponChefTests/Pods-CouponChef-CouponChefTests.release.xcconfig"; sourceTree = "<group>"; };
-		AAAE8304D84840C0B6F40830 /* App.tsx */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = App.tsx; path = ../App.tsx; sourceTree = "<group>"; };
+		C457F979E6C342E296BA7233 /* Dropdown.tsx */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = undefined; includeInIndex = 0; lastKnownFileType = unknown; name = Dropdown.tsx; path = ../src/Dropdown.tsx; sourceTree = "<group>"; };
 		ED297162215061F000B7C4FE /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JavaScriptCore.framework; path = System/Library/Frameworks/JavaScriptCore.framework; sourceTree = SDKROOT; };
-		F393B0D811C641E7BA3036BE /* apikey.txt */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = apikey.txt; path = ../src/apikey.txt; sourceTree = "<group>"; };
-		F4E17D9D73F94428A20E3FB4 /* RecipeItem.tsx */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = RecipeItem.tsx; path = ../src/RecipeItem.tsx; sourceTree = "<group>"; };
+		FF0029F9600349CABBC5231B /* apikey.txt */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = undefined; includeInIndex = 0; lastKnownFileType = unknown; name = apikey.txt; path = ../src/apikey.txt; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -118,9 +122,11 @@
 			isa = PBXGroup;
 			children = (
 				3708563193B5455C821AD81D /* CircularProgress.tsx */,
-				F4E17D9D73F94428A20E3FB4 /* RecipeItem.tsx */,
-				F393B0D811C641E7BA3036BE /* apikey.txt */,
-				AAAE8304D84840C0B6F40830 /* App.tsx */,
+				C457F979E6C342E296BA7233 /* Dropdown.tsx */,
+				20167D33B4214D468C5BDA86 /* RecipeDetails.tsx */,
+				57D12E9C38704151B178223D /* RecipeItem.tsx */,
+				FF0029F9600349CABBC5231B /* apikey.txt */,
+				04B33A2CE4FE4279B8C24E68 /* App.tsx */,
 			);
 			name = Resources;
 			sourceTree = "<group>";
@@ -265,9 +271,11 @@
 				81AB9BB82411601600AC10FF /* LaunchScreen.storyboard in Resources */,
 				13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */,
 				C885835AFE5B4003AC888DC0 /* CircularProgress.tsx in Resources */,
-				2C573A51D0FC4234AFCB5CE9 /* RecipeItem.tsx in Resources */,
-				1FF0ADECB61347D2BF677004 /* apikey.txt in Resources */,
-				7334A5BC40554284AD43C7B5 /* App.tsx in Resources */,
+				886E8F965CF943FCB62926A9 /* Dropdown.tsx in Resources */,
+				CFD901397D2940CDB80D6079 /* RecipeDetails.tsx in Resources */,
+				649565E0C65843DABDBD7DA0 /* RecipeItem.tsx in Resources */,
+				38731DB8F5E749B9A6A7568B /* apikey.txt in Resources */,
+				52414ED542684E4F9E0C9FFD /* App.tsx in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
