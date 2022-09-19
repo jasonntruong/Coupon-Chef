@@ -12,14 +12,24 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import React, {useEffect, useState} from 'react';
+import React, {useState} from 'react';
+import {Recipe, Sales} from './RecipeItem';
 
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import Dropdown from './Dropdown';
 
-function RecipeDetails(props) {
+interface Props {
+  saved: boolean;
+  showDetails: boolean;
+  moneySaved: string;
+  sales: Sales;
+  recipes: Recipe;
+  onRequestClose: () => void;
+}
+
+function RecipeDetails(props: Props) {
   const [saved, setSaved] = useState(props.saved);
-  function isDecimal(number) {
+  function isDecimal(number: string) {
     if (!number) {
       return null;
     }
@@ -28,15 +38,18 @@ function RecipeDetails(props) {
       number.indexOf('.') === number.lastIndexOf('.')
     );
   }
-  function addStrings(num1, num2) {
+  function addStrings(num1: string, num2: string) {
     if (isDecimal(num1) && isDecimal(num2)) {
-      return parseInt((parseFloat(num1) + parseFloat(num2)) * 100) / 100;
+      return (
+        parseInt(String((parseFloat(num1) + parseFloat(num2)) * 100), 10) / 100
+      );
     }
     return null;
   }
   function gotReward(num: number) {
     const milestoneDifference =
-      parseInt(num / 100) - parseInt(props.moneySaved / 100);
+      parseInt(String(num / 100), 10) -
+      parseInt(String(Number(props.moneySaved) / 100), 10);
     if (milestoneDifference > 0) {
       Alert.alert(
         'Congratulations!',
@@ -59,7 +72,7 @@ function RecipeDetails(props) {
       for (var item of parsedItems) {
         toHistory.push(item);
       }
-      console.log(toHistory);
+
       await AsyncStorage.setItem('historyItems', JSON.stringify(toHistory));
     }
   }
@@ -72,6 +85,9 @@ function RecipeDetails(props) {
         {
           text: 'Purchase',
           onPress: async text => {
+            if (!text) {
+              text = '0';
+            }
             const sum = addStrings(props.moneySaved, text);
             if (sum) {
               await addToHistory();
@@ -103,7 +119,6 @@ function RecipeDetails(props) {
         }
         toBeSaved.push(item);
       }
-      console.log(toBeSaved);
       setSaved(true);
       await AsyncStorage.setItem('savedItems', JSON.stringify(toBeSaved));
     }
@@ -120,7 +135,7 @@ function RecipeDetails(props) {
         toBeSaved.push(item);
       }
     }
-    console.log(toBeSaved);
+
     setSaved(false);
 
     await AsyncStorage.setItem(
@@ -270,4 +285,5 @@ const styles = StyleSheet.create({
     height: Dimensions.get('window').width - 50,
   },
 });
+
 export default RecipeDetails;

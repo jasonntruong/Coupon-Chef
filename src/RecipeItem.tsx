@@ -3,32 +3,57 @@ import React, {useState} from 'react';
 
 import RecipeDetails from './RecipeDetails';
 
-function RecipeItem(props) {
+export type Sale = {
+  store: string;
+  item: string;
+  price: string;
+  savings: string;
+  url: string;
+};
+
+export type Sales = {[sale: string]: [Sale]};
+export type Ingredient = {
+  amount: number;
+  unit: string;
+  name: string;
+  original: [string];
+  image: string;
+};
+export type Recipe = {
+  title: string;
+  link: string;
+  image: string;
+  missedIngredients: [Ingredient];
+  usedIngredients: [Ingredient];
+};
+interface Props {
+  sales: Sales;
+  recipes: Recipe;
+  saved: boolean;
+  moneySaved: string;
+  backPressed: () => void;
+}
+
+function RecipeItem(props: Props) {
   const [showDetails, setShowDetails] = useState(false);
-  function isValidValue(price, type) {
+  function isValidValue(price: string) {
     const numberPrice = Number(price);
-    if (
-      numberPrice &&
-      numberPrice > 0 &&
-      ((type === 'savings' && numberPrice < 15) || type !== 'savings')
-    ) {
+    if (numberPrice && numberPrice > 0 && numberPrice < 15) {
       return numberPrice;
     }
     return 0;
   }
-  function getValueAverage(names, type) {
+  function getValueAverage(names: [string]) {
     var total = 0;
     var items = 0;
     for (const name of names) {
       for (const item of props.sales[name]) {
         var itemValue = '';
-        if (type === 'savings') {
-          itemValue = item.savings;
-        } else {
-          itemValue = item.price;
-        }
-        if (isValidValue(itemValue, type) !== 0) {
-          total += isValidValue(itemValue, type);
+
+        itemValue = item.savings;
+
+        if (isValidValue(itemValue) !== 0) {
+          total += isValidValue(itemValue);
           items += 1;
         }
       }
@@ -38,12 +63,12 @@ function RecipeItem(props) {
     }
     return total / items;
   }
-  function calculateValue(type) {
+  function calculateValue() {
     var totalValue = 0;
     var ingredients = props.recipes.usedIngredients;
     for (const ingredient of ingredients) {
-      if (getValueAverage(ingredient.original, type) !== 0) {
-        totalValue += getValueAverage(ingredient.original, type);
+      if (getValueAverage(ingredient.original) !== 0) {
+        totalValue += getValueAverage(ingredient.original);
       }
     }
     return (Math.round(totalValue * 100) / 100) as unknown as String;
@@ -56,8 +81,7 @@ function RecipeItem(props) {
     return props.recipes.title;
   }
 
-  const savings = calculateValue('savings');
-  const price = calculateValue('price');
+  const savings = calculateValue();
   const title = formatTitle();
   return (
     <TouchableOpacity style={styles.box} onPress={() => setShowDetails(true)}>
@@ -65,10 +89,7 @@ function RecipeItem(props) {
         <Image style={styles.image} source={{uri: props.recipes.image}} />
       </View>
       <Text style={styles.title}>{title}</Text>
-      <View style={styles.row}>
-        <Text style={styles.savings}>{'$' + savings}</Text>
-        {/* <Text style={styles.price}>{'$' + price}</Text> */}
-      </View>
+      <Text style={styles.savings}>{'$' + savings}</Text>
       <RecipeDetails
         showDetails={showDetails}
         onRequestClose={() => {
@@ -89,11 +110,6 @@ const styles = {
     margin: 10,
     marginRight: 35,
     marginLeft: 0,
-  },
-  row: {
-    flexDirection: 'row',
-    flex: 1,
-    width: 140,
   },
   image: {
     width: 120,

@@ -1,4 +1,4 @@
-import {Animated, Dimensions, View} from 'react-native';
+import {Animated, Dimensions} from 'react-native';
 import Svg, {Circle, Text} from 'react-native-svg';
 
 import React from 'react';
@@ -10,11 +10,11 @@ const radius = (size - strokeWidth) / 2;
 const circumference = radius * 2 * Math.PI;
 const {Value, multiply} = Animated;
 const AnimatedCircle = Animated.createAnimatedComponent(Circle);
-interface props {
+interface Props {
   savingsString: string;
 }
 
-export default ({savingsString}: props) => {
+export default ({savingsString}: Props) => {
   const savings = savingsString.substring(
     1,
     savingsString.length,

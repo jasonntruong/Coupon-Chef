@@ -1,16 +1,27 @@
+import {Ingredient, Sale, Sales} from './RecipeItem';
 import {Linking, Text, TouchableOpacity, View} from 'react-native';
 import React, {useState} from 'react';
+export type DropdownChildren = [Ingredient];
+export type TextChildren = [[Sale]];
+interface Props {
+  dropped: boolean;
+  style: {};
+  type: string;
+  title: string;
+  children: DropdownChildren | TextChildren;
+  sales: Sales;
+}
 
-function Dropdown(props) {
+function Dropdown(props: Props) {
   const [dropped, setDropped] = useState(props.dropped);
-  function makeItems(type) {
+  function makeItems(type: string) {
     if (!dropped) {
       return;
     }
     if (type === 'Text') {
       return (
         <View style={{paddingHorizontal: 15, paddingTop: 5}}>
-          {props.children.map(items => {
+          {(props.children as TextChildren).map(items => {
             return items.map(name => {
               var nameStore = name.store;
               return (
@@ -31,7 +42,7 @@ function Dropdown(props) {
     } else if (type === 'Dropdown') {
       return (
         <View style={{paddingLeft: 15, paddingTop: 5}}>
-          {props.children.map(item => {
+          {(props.children as DropdownChildren).map(item => {
             return (
               <Dropdown
                 dropped={false}
@@ -45,9 +56,12 @@ function Dropdown(props) {
                   item.name.substring(1)
                 }
                 type={'Text'}
-                children={item.original.map(name => {
-                  return props.sales[name];
-                })}
+                children={
+                  item.original.map((name: string) => {
+                    return props.sales[name];
+                  }) as TextChildren
+                }
+                sales={{}}
               />
             );
           })}
