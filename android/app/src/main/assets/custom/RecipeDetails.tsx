@@ -11,17 +11,12 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import Dropdown from './Dropdown';
 import React from 'react';
 
 function RecipeDetails(props) {
-  function saveItem() {
-    const savedItems = await AsyncStorage.getItem('savedItems');
-    await AsyncStorage.setItem();
-  }
-
   return (
     <Modal animationType="slide" visible={props.showDetails}>
       <>

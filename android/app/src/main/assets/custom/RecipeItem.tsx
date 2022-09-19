@@ -58,7 +58,6 @@ function RecipeItem(props) {
   }
 
   const savings = calculateValue('savings');
-  const price = calculateValue('price');
   const title = formatTitle();
   return (
     <TouchableOpacity style={styles.box} onPress={() => setShowDetails(true)}>
@@ -74,7 +73,8 @@ function RecipeItem(props) {
         showDetails={showDetails}
         onRequestClose={() => setShowDetails(false)}
         recipes={props.recipes}
-        sales={props.sales}></RecipeDetails>
+        sales={props.sales}
+      />
     </TouchableOpacity>
   );
 }

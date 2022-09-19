@@ -61,7 +61,7 @@ function App() {
     return null;
   }
   const recipeItems = recipes.map(recipe => {
-    return <RecipeItem recipes={recipe} sales={sales}></RecipeItem>;
+    return <RecipeItem recipes={recipe} sales={sales} />;
   });
 
   return (
@@ -81,7 +81,7 @@ function App() {
         </ScrollView>
         <Text style={styles.subtitleText}>Saved</Text>
         <Text style={styles.subtitleText}>History</Text>
-        <Button title={'adas'} onPress={() => setTest(!test)}></Button>
+        <Button title={'adas'} onPress={() => setTest(!test)} />
       </ScrollView>
       <View style={styles.footer} />
     </NavigationContainer>

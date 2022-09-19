@@ -1,4 +1,4 @@
-import {Animated, Dimensions, View} from 'react-native';
+import {Animated, Dimensions} from 'react-native';
 import Svg, {Circle, Text} from 'react-native-svg';
 
 import React from 'react';
