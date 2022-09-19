@@ -221,11 +221,16 @@ def getRecipes():  # gets recipes. takes sales from sales.json and makes an API 
     processRecipes(recipes_json)
 
 
+def roundAmount(amount):  # round amount to 2 decimal places
+    return str(round(float(amount), 2))
+
 # missing and used ingredients returned from spoonacular have a load of data that isn't needed. this function only returns relevant data
+
+
 def processMissingOrUsedIngredient(ingredients):
     ingredient_json = []
     for ingredient in ingredients:
-        ingredient_json.append({"amount": ingredient["amount"], "unit": ingredient["unitShort"],
+        ingredient_json.append({"amount": roundAmount(ingredient["amount"]), "unit": ingredient["unitShort"],
                                 "name": ingredient["name"], "original": findOriginalName(ingredient["name"]), "image": ingredient["image"]})
     return ingredient_json
 
