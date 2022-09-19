@@ -20,14 +20,16 @@ import RNFS from 'react-native-fs';
 LogBox.ignoreAllLogs();
 
 function App() {
-  const [test, setTest] = useState(false);
+  const [loading, setLoading] = useState(false); //used to refresh the app until the recipe and sales are fetched from our api
   const [recipes, setRecipes] = useState([]);
   const [sales, setSales] = useState({});
-  const [saved, setSaved] = useState([]);
-  const [history, setHistory] = useState([]);
-  const [moneySaved, setMoneySaved] = useState('0');
+  const [saved, setSaved] = useState([]); //recipes that are saved by the user
+  const [history, setHistory] = useState([]); //history of recipes that the user has cooked
+  const [moneySaved, setMoneySaved] = useState('0'); //total amount saved from all the recipes they cooked
+
+  //fetch recipe and sales from custom made backend api
   useEffect(() => {
-    const fetchRecipes = async () => {
+    const fetchRecipesAndSales = async () => {
       const apiURL = await getRecipesAPI();
       if (apiURL === undefined) {
         return;
@@ -41,8 +43,10 @@ function App() {
       setSales(saleJson);
     };
 
-    fetchRecipes();
+    fetchRecipesAndSales();
   }, []);
+
+  //get saved information from asyncstorage
   useEffect(() => {
     const init = async () => {
       const money = await AsyncStorage.getItem('money');
@@ -59,12 +63,15 @@ function App() {
       }
 
       if (Object.keys(sales).length === 0) {
-        setTest(!test);
+        //reload until sales is fetched from api
+        setLoading(!loading);
       } else {
         if (money) {
+          //set money saved
           setMoneySaved(money);
         }
 
+        //build the history tab in app with the recipes stored in async storage's historyItems
         if (parsedHistory.length === 0) {
           setHistory([]);
         } else if (parsedHistory) {
@@ -73,7 +80,7 @@ function App() {
               <RecipeItem
                 recipes={recipe}
                 sales={sales}
-                backPressed={() => setTest(!test)}
+                backPressed={() => setLoading(!loading)}
                 saved={false}
                 moneySaved={money || '0.00'}
               />
@@ -81,6 +88,8 @@ function App() {
           });
           setHistory(historyRecipes);
         }
+
+        //build the saved tab in app with the recipes stored in async storage's savedItems
         if (parsedSaved.length === 0) {
           setSaved([]);
         } else if (parsedSaved) {
@@ -89,7 +98,7 @@ function App() {
               <RecipeItem
                 recipes={recipe}
                 sales={sales}
-                backPressed={() => setTest(!test)}
+                backPressed={() => setLoading(!loading)}
                 saved={true}
                 moneySaved={money || '0.00'}
               />
@@ -102,8 +111,9 @@ function App() {
       }
     };
     init();
-  }, [test]);
+  }, [loading]);
 
+  //get the API key stored in apikey.txt (not public)
   async function getRecipesAPI() {
     return RNFS.readDir(RNFS.MainBundlePath)
       .then(result => {
@@ -123,12 +133,14 @@ function App() {
   if (Object.keys(recipes).length === 0 || Object.keys(sales).length === 0) {
     return null;
   }
+
+  //build all the recipe items
   const recipeItems = recipes.map((recipe: Recipe) => {
     return (
       <RecipeItem
         recipes={recipe}
         sales={sales}
-        backPressed={() => setTest(!test)}
+        backPressed={() => setLoading(!loading)}
         saved={false}
         moneySaved={moneySaved}
       />
@@ -158,15 +170,16 @@ function App() {
         <ScrollView horizontal={true} showsHorizontalScrollIndicator={false}>
           {history}
         </ScrollView>
+        {/* Dev button to reset all async storage values
         <Button
           title={'dev force reset'}
           onPress={() => {
             AsyncStorage.setItem('money', '0');
             AsyncStorage.setItem('savedItems', '');
             AsyncStorage.setItem('historyItems', '');
-            setTest(!test);
+            setLoading(!loading);
           }}
-        />
+        /> */}
       </ScrollView>
 
       <View style={styles.footer} />

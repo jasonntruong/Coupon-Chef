@@ -1,6 +1,8 @@
 import {Ingredient, Sale, Sales} from './RecipeItem';
 import {Linking, Text, TouchableOpacity, View} from 'react-native';
 import React, {useState} from 'react';
+
+//Dropdown menu for each ingredient on sale
 export type DropdownChildren = [Ingredient];
 export type TextChildren = [[Sale]];
 interface Props {

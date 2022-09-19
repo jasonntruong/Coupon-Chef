@@ -3,6 +3,7 @@ import Svg, {Circle, Text} from 'react-native-svg';
 
 import React from 'react';
 
+//Circle progress bar
 const {width} = Dimensions.get('window');
 const size = width - 200;
 const strokeWidth = 3;
