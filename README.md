@@ -11,7 +11,7 @@ Create an app that takes all the groceries on sale in my area and recommends me 
 ## How it was made:
 ### Back End:
 Python + Flask + Selenium + Spoonacular API program that:
-- Scrapes flipp.com for local grocery store sales in my area. Stores them into a flyers JSON. [Example here using TMU's address, not mine :D](https://github.com/jasonntruong/Coupon-Chef/blob/master/backend/flyers.json)
+- Scrapes [flipp.com](https://flipp.com) for local grocery store sales in my area. Stores them into a flyers JSON. [Example here using TMU's address, not mine :D](https://github.com/jasonntruong/Coupon-Chef/blob/master/backend/flyers.json)
 - Filters the sales from the flyers that are actual ingredients and stores them into a sales JSON. [Example here](https://github.com/jasonntruong/Coupon-Chef/blob/master/backend/sales.json)
 - Throw the sales JSON into Spoonacular API to get a list of recipes that consist of on sale ingredients. [Example here](https://github.com/jasonntruong/Coupon-Chef/blob/master/backend/recipes.json)
 - Use Flask to make an API that return the sales and recipes JSON when the respective API calls are made
