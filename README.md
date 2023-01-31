@@ -18,3 +18,5 @@ Python + Flask + Selenium + Spoonacular API program that:
 
 ### Front End:
 React Native + TypeScript app that simply displays the recipes from my custom API
+
+### Developed for iOS. Cannot gurantee it works on Android
